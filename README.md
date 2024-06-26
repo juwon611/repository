@@ -1,4 +1,3 @@
-# repository
 
 <br>프로그램 개발환경/언어: CSS, HTML, JAVA SCRIPT <br/>
 <br>개발자: 부경대학교 휴먼바이오융합학과 헬스케어프로그래밍 수업 7조 차주원, 안예인<br/>
