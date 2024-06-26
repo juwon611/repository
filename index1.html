@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', 'Noto Sans KR', cursive;
+            background-color: #fffbea;
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .korean-text {
+            font-family: 'DungGeunMo', 'Noto Sans KR', sans-serif;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            background-color: rgba(255, 243, 224, 0.9);
+            border: 2px solid #ffcc80;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        h1, h2 {
+            color: #ff7043;
+        }
+
+        button {
+            background-color: #ffcc80;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px;
+            border-radius: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #ffa726;
+            transform: scale(1.05);
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        input[type="text"], input[type="number"], input[type="file"], input[type="date"], select {
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ffcc80;
+            border-radius: 10px;
+            width: 80%;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            padding: 3px;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #ffcc80;
+            display: inline-block;
+            margin: 10px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .friend-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .friend-list li {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .friend-list img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .quest {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+
+        .statistics {
+            font-size: 12px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome" class="container">
+        <h1>Let's play GameFit!</h1>
+        <button onclick="showPage('customization')">START</button>
+    </div>
+
+    <div id="customization" class="container hidden">
+        <h2>Character Customization</h2>
+        <input type="text" id="nickname" placeholder="NICKNAME"><br>
+        <input type="number" id="age" placeholder="AGE"><br>
+        <input type="file" id="profile" onchange="previewProfile()"><br>
+        <div class="profile-pic" id="profile-pic"></div>
+        <button onclick="showPage('my-goal')">NEXT</button>
+    </div>
+
+    <div id="my-goal" class="container hidden">
+        <h2>My Goal</h2>
+        <h3>Your Profile</h3>
+        <div class="profile-pic" id="user-profile-pic"></div>
+        <p id="user-profile-nickname"></p>
+        <input type="text" id="status-message" placeholder="Enter Your Goal/Status"><br>
+        <button onclick="showPage('main')">NEXT</button>
+    </div>
+
+    <div id="main" class="container hidden">
+        <h2>Main</h2>
+        <div class="profile-pic" id="main-profile-pic"></div>
+        <p id="user-info">Nickname: <span id="user-nickname"></span></p>
+        <p>Level: <span id="user-level">1</span></p>
+        <p>XP: <span id="user-xp">0</span>/100</p>
+        <div class="button-container">
+            <button onclick="showPage('my-goal')">MY GOAL</button>
+            <button onclick="showPage('quest')">TODAY'S QUEST</button>
+            <button onclick="showPage('calories')">TODAY'S RESULT</button>
+            <button onclick="showPage('statistics')">VIEW STATISTICS</button>
+            <button onclick="showPage('notifications')">NOTIFICATION SETTINGS</button>
+            <button onclick="showPage('exercise-tips')">EXERCISE TIPS</button>
+            <button onclick="generateProfileLink()">PROFILE SHARE</button>
+        </div>
+        <input type="file" id="background-upload" onchange="changeBackground()" accept="image/*">
+        <button onclick="resetBackground()">RESET BACKGROUND</button>
+    </div>
+
+    <div id="quest" class="container hidden">
+        <h2>Today's Quest</h2>
+        <div id="quest-list">
+            <div class="quest">
+                <p>DRINK 2 LITERS OF WATER</p>
+                <button onclick="completeQuest(30)">FINISH</button>
+            </div>
+            <div class="quest">
+                <p>WALKING FOR 1 HOUR</p>
+                <button onclick="completeQuest(50)">FINISH</button>
+            </div>
+            <div class="quest">
+                <p>NO SNACK</p>
+                <button onclick="completeQuest(20)">FINISH</button>
+            </div>
+            <div class="quest">
+                <p>STRETCHING FOR 15 MINUTES</p>
+                <button onclick="completeQuest(35)">FINISH</button>
+            </div>
+            <div class="quest">
+                <p>MUSCLE WORKOUT FOR 1 HOUR(PUSH-UPS/SQUATS)</p>
+                <button onclick="completeQuest(45)">FINISH</button>
+            </div>
+            <div class="quest">
+                <p>SLEEPING 7-8 HOURS</p>
+                <button onclick="completeQuest(60)">FINISH</button>
+            </div>
+            <div class="quest">
+                <p>READING FOR 30 MINUTES</p>
+                <button onclick="completeQuest(40)">FINISH</button>
+            </div>
+            <div class="quest">
+                <p>MEDITATION FOR 10 MINUTES</p>
+                <button onclick="completeQuest(10)">FINISH</button>
+            </div>
+            <div class="quest">
+                <p>COMPLETE A 10K STEPS</p>
+                <button onclick="completeQuest(100)">FINISH</button>
+            </div>
+        </div>
+        <button onclick="showPage('main')">NEXT TIME</button><br>
+        <button onclick="showPage('main')">MAIN PAGE</button>
+    </div>
+
+    <div id="calories" class="container hidden">
+        <h2>Calorie Intake</h2>
+        <input type="number" placeholder="MORNING calories" id="morning-calories"><br>
+        <input type="number" placeholder="LUNCH calories" id="lunch-calories"><br>
+        <input type="number" placeholder="DINNER calories" id="dinner-calories"><br>
+        <button onclick="showPage('exercise')">NEXT</button>
+    </div>
+
+    <div id="exercise" class="container hidden">
+        <h2>Exercise Calculation</h2>
+        <div id="exercise-inputs">
+            <div class="exercise-entry">
+                <select class="exercise-type">
+                    <option value="CYCLING">CYCLING</option>
+                    <option value="WALKING">WALKING</option>
+                    <option value="RUNNING">RUNNING</option>
+                    <option value="SWIMMING">SWIMMING</option>
+                    <option value="AEROBIC">AEROBIC EXERCISE</option>
+                    <option value="YOGA">YOGA</option>
+                    <option value="PUSHUPS">PUSHUPS</option>
+                    <option value="JUMPING_JACKS">JUMPING JACKS</option>
+                    <option value="SQUATS">SQUATS</option>
+                </select>
+                <input type="number" class="exercise-time" placeholder="EXERCISE TIME (minutes)">
+            </div>
+        </div>
+        <button onclick="addExerciseEntry()">Add Another Exercise</button><br>
+        <input type="number" placeholder="WEIGHT" id="weight"><br>
+        <button onclick="calculateResult()">NEXT</button>
+    </div>
+
+
+    <div id="result" class="container hidden">
+        <h2>Result</h2>
+        <p id="result-message">[Result message]</p>
+        <button onclick="showPage('main')">MAIN</button>
+    </div>
+
+    <div id="statistics" class="container hidden">
+        <h2>Your Statistics</h2>
+        <div class="statistics">
+            <p>Total Calories Burned: <span id="total-calories-burned">0</span></p>
+            <p>Total Exercise Time: <span id="total-exercise-time">0</span> minutes</p>
+        </div>
+        <button onclick="showPage('main')">MAIN</button>
+    </div>
+
+    <div id="notifications" class="container hidden">
+        <h2>Notification Settings</h2>
+        <input type="time" id="notification-time"><br>
+        <button onclick="setNotification()">SET NOTIFICATION</button>
+        <button onclick="showPage('main')">MAIN</button>
+    </div>
+
+    <div id="exercise-tips" class="container hidden">
+        <h2>Exercise Tips</h2>
+        <div class="tips">
+            <p>운동하는 동안 수분을 유지합니다. </p>
+            <p>운동 전에 몸을 풀고 운동 후에 몸을 식히세요.</p>
+            <p>지루하지 않도록 운동을 섞어주세요.</p>
+            <p>휴식과 회복은 운동만큼이나 중요합니다.</p>
+            <p>운동에 대한 자세한 팁이 필요하다면 찾아봅시다 <a href="https://www.youtube.com/results?search_query=exercise+tips" target="_blank">this YouTube search</a>.</p>
+        </div>
+        <button onclick="showPage('main')">MAIN</button>
+    </div>
+
+    <script>
+        let friends = [];
+        let friendRequests = [];
+        let userXP = 0;
+        let userLevel = 1;
+        let totalCaloriesBurned = 0;
+        let totalExerciseTime = 0;
+        const goodJobMessages = ["충분히 잘하시고 있습니다", "균형 잡힌 식사와 규칙적인 운동을 꾸준히 유지해봐요!", "건강한 생활습관, 유지하실거죠?", "내일도 이렇게!"];
+        const moreExerciseMessages = ["균형 잡힌 식사와 함께 규칙적인 운동을 병행하여 칼로리 균형을 맞추는 것이 중요합니다", "하루에 최소 30분 이상의 유산소 운동을 통해 칼로리 소모를 늘리는 것이 좋습니다.", "엘리베이터 대신 계단을 이용하고, 가까운 거리는 걸어서 이동하는 등의 습관을 길러보세요.", "불필요한 간식 섭취를 줄여보아요"];
+
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.container');
+            pages.forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            if (pageId === 'main') {
+                document.getElementById('user-nickname').textContent = document.getElementById('nickname').value;
+                document.getElementById('main-profile-pic').style.backgroundImage = document.getElementById('profile-pic').style.backgroundImage;
+                document.getElementById('total-calories-burned').textContent = totalCaloriesBurned;
+                document.getElementById('total-exercise-time').textContent = totalExerciseTime;
+            }
+        }
+
+        function previewProfile() {
+            const file = document.getElementById('profile').files[0];
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                document.getElementById('profile-pic').style.backgroundImage = `url(${reader.result})`;
+                document.getElementById('user-profile-pic').style.backgroundImage = `url(${reader.result})`;
+                localStorage.setItem('profilePic', reader.result);
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function generateProfileLink() {
+            const nickname = document.getElementById('nickname').value;
+            const statusMessage = document.getElementById('status-message').value;
+            const level = document.getElementById('user-level').textContent;
+            const profilePic = localStorage.getItem('profilePic');
+
+            const profileLink = `${window.location.origin}/profile.html?nickname=${encodeURIComponent(nickname)}&status=${encodeURIComponent(statusMessage)}&level=${encodeURIComponent(level)}&profilePic=${encodeURIComponent(profilePic)}`;
+            
+            prompt('Share this link with your friends:', profileLink);
+        }
+
+        function completeQuest(xp) {
+            userXP += xp;
+            while (userXP >= 100) {
+                userXP -= 100;
+                userLevel++;
+            }
+            document.getElementById('user-xp').textContent = userXP;
+            document.getElementById('user-level').textContent = userLevel;
+            alert(`You earned ${xp} XP!`);
+            showPage('main');
+        }
+
+        function calculateResult() {
+            const morningCalories = parseInt(document.getElementById('morning-calories').value) || 0;
+            const lunchCalories = parseInt(document.getElementById('lunch-calories').value) || 0;
+            const dinnerCalories = parseInt(document.getElementById('dinner-calories').value) || 0;
+            const totalCalories = morningCalories + lunchCalories + dinnerCalories;
+
+            const exerciseEntries = document.querySelectorAll('.exercise-entry');
+            const weight = parseInt(document.getElementById('weight').value) || 0;
+            let totalExerciseCalories = 0;
+
+            exerciseEntries.forEach(entry => {
+                const exerciseType = entry.querySelector('.exercise-type').value;
+                const exerciseTime = parseInt(entry.querySelector('.exercise-time').value) || 0;
+                totalExerciseCalories += calculateExerciseCalories([exerciseType], exerciseTime, weight);
+            });
+
+            const resultMessage = document.getElementById('result-message');
+
+            if (totalExerciseCalories > totalCalories) {
+                const message = goodJobMessages[Math.floor(Math.random() * goodJobMessages.length)];
+                resultMessage.innerHTML = `${message} <span style="font-size: 2em;">😃</span>`;
+                userXP += 50;
+            } else {
+                const message = moreExerciseMessages[Math.floor(Math.random() * moreExerciseMessages.length)];
+                resultMessage.innerHTML = `${message} <span style="font-size: 2em;">😢</span>`;
+                userXP -= 20;
+            }
+
+            document.getElementById('user-xp').textContent = userXP;
+            totalCaloriesBurned += totalExerciseCalories;
+            totalExerciseTime += Array.from(exerciseEntries).reduce((total, entry) => total + (parseInt(entry.querySelector('.exercise-time').value) || 0), 0);
+            document.getElementById('total-calories-burned').textContent = totalCaloriesBurned;
+            document.getElementById('total-exercise-time').textContent = totalExerciseTime;
+
+            showPage('result');
+        }
+
+        function calculateExerciseCalories(types, time, weight) {
+            const calorieRates = {
+                CYCLING: 8,
+                WALKING: 4,
+                RUNNING: 10,
+                SWIMMING: 7,
+                AEROBIC: 6,
+                YOGA: 3,
+                PUSHUPS: 5,
+                JUMPING_JACKS: 7,
+                SQUATS: 6
+            };
+
+            return types.reduce((total, type) => total + (calorieRates[type] * time * weight / 60), 0);
+        }
+
+        function addExerciseEntry() {
+            const exerciseInputs = document.getElementById('exercise-inputs');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'exercise-entry';
+            newEntry.innerHTML = `
+                <select class="exercise-type">
+                    <option value="CYCLING">CYCLING</option>
+                    <option value="WALKING">WALKING</option>
+                    <option value="RUNNING">RUNNING</option>
+                    <option value="SWIMMING">SWIMMING</option>
+                    <option value="AEROBIC">AEROBIC EXERCISE</option>
+                    <option value="YOGA">YOGA</option>
+                    <option value="PUSHUPS">PUSHUPS</option>
+                    <option value="JUMPING_JACKS">JUMPING JACKS</option>
+                    <option value="SQUATS">SQUATS</option>
+                </select>
+                <input type="number" class="exercise-time" placeholder="EXERCISE TIME (minutes)">
+            `;
+            exerciseInputs.appendChild(newEntry);
+        }
+
+    
+
+        function setNotification() {
+            const notificationTime = document.getElementById('notification-time').value;
+            if (notificationTime) {
+                const now = new Date();
+                const targetTime = new Date();
+                const [hours, minutes] = notificationTime.split(':');
+                targetTime.setHours(hours, minutes, 0, 0);
+                const timeToNotification = targetTime.getTime() - now.getTime();
+
+                if (timeToNotification > 0) {
+                    setTimeout(() => {
+                        if (Notification.permission === 'granted') {
+                            new Notification('Exercise Reminder', {
+                                body: 'Time to do some exercise!',
+                                icon: 'path/to/icon.png'
+                            });
+                        } else if (Notification.permission !== 'denied') {
+                            Notification.requestPermission().then(permission => {
+                                if (permission === 'granted') {
+                                    new Notification('Exercise Reminder', {
+                                        body: 'Time to do some exercise!',
+                                        icon: 'path/to/icon.png'
+                                    });
+                                }
+                            });
+                        }
+                    }, timeToNotification);
+                }
+                alert(`Notification set for ${notificationTime}`);
+            } else {
+                alert('Please set a valid time for notification.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const backgroundPic = localStorage.getItem('backgroundPic');
+            if (backgroundPic) {
+                document.body.style.backgroundImage = `url(${backgroundPic})`;
+            }
+            showPage('welcome'); // 처음 로드될 때 welcome 페이지로 이동
+        });
+
+        function changeBackground() {
+            const file = document.getElementById('background-upload').files[0];
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                document.body.style.backgroundImage = `url(${reader.result})`;
+                localStorage.setItem('backgroundPic', reader.result);
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function resetBackground() {
+            document.body.style.backgroundImage = '';
+            localStorage.removeItem('backgroundPic');
+        }
+    </script>
+</body>
+</html>
+
+</head>
+<body>
+    <div class="container">
+        <h2>Play with Me!</h2>
+        <p>Inviter: <span id="nickname"></span></p>
+        <p>Inviter's Goal: <span id="status-message"></span></p>
+        <p>Level: <span id="level"></span></p>
+        <button onclick="window.location.href='index1.html'">Let's Play</button>
+    </div>
+
+    <script>
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('nickname').textContent = getQueryParam('nickname');
+            document.getElementById('level').textContent = getQueryParam('level');
+            document.getElementById('status-message').textContent = getQueryParam('status');
+        });
+    </script>
+</body>
+</html>
+
